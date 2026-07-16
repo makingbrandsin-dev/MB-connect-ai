@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Sophisticated connection ring representing secure core network -->
+    <path
+        android:pathData="M 54,24 A 30,30 0 1,1 53.99,24"
+        android:strokeColor="#5D4037"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+
+    <!-- Connection Node 1 (Top-Right) -->
+    <path
+        android:pathData="M75.2,32.8 A 4,4 0 1,1 75.19,32.8"
+        android:fillColor="#5D4037" />
+
+    <!-- Connection Node 2 (Bottom-Left) -->
+    <path
+        android:pathData="M32.8,75.2 A 4,4 0 1,1 32.79,75.2"
+        android:fillColor="#5D4037" />
+
+    <!-- Letter M (Mathematically centered) -->
+    <path
+        android:pathData="M 33,64 L 33,44 L 42,54 L 51,44 L 51,64"
+        android:strokeColor="#5D4037"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Letter B (Mathematically centered with perfect symmetry) -->
+    <path
+        android:pathData="M 59,64 L 59,44 L 70,44 A 5,5 0 0,1 70,54 L 59,54 M 59,54 L 70,54 A 5,5 0 0,1 70,64 L 59,64"
+        android:strokeColor="#5D4037"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+</vector>

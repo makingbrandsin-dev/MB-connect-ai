@@ -1,0 +1,6 @@
+{
+  "name": "MB Connect",
+  "description": "AI-powered call answering, transcribing, and summary app for SIM and WhatsApp calls with customizable FAQ bot routing, Telugu voice support, and secure encrypted log dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
