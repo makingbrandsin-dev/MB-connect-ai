@@ -53,8 +53,22 @@ import kotlinx.coroutines.delay
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import com.example.ui.theme.MyApplicationTheme
+import com.example.ui.theme.BeigePrimary as RawBeigePrimary
+import com.example.ui.theme.BeigeSecondary as RawBeigeSecondary
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.animation.*
+import androidx.compose.animation.core.spring
+
 import java.text.SimpleDateFormat
 import java.util.*
+
+val BeigePrimary: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) Color(0xFF0DDE9F) else Color(0xFF2563EB) // Modern Mint Green vs Vibrant Sapphire Blue
+
+val BeigeSecondary: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) Color(0xFF38BDF8) else Color(0xFF0F172A) // Sky Blue vs Midnight Deep Slate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,15 +138,31 @@ fun MainScreen(viewModel: AppViewModel) {
                 )
             }
             else -> {
-                // Normal App Screen Switcher
-                when (currentScreen) {
-                    AppScreen.SPLASH -> SplashScreen(viewModel = viewModel)
-                    AppScreen.ONBOARDING -> OnboardingScreen(viewModel = viewModel)
-                    AppScreen.SIGN_UP -> SignUpScreen(viewModel = viewModel)
-                    AppScreen.SIGN_IN -> SignInScreen(viewModel = viewModel)
-                    AppScreen.SIGN_IN_OTP -> OtpScreen(viewModel = viewModel)
-                    AppScreen.FORGOT_PASSWORD -> ForgotPasswordScreen(viewModel = viewModel)
-                    AppScreen.DASHBOARD -> DashboardScreen(viewModel = viewModel, hasRecordPermission = hasRecordPermission)
+                // Normal App Screen Switcher with Gorgeous Physics-based Screen Animations
+                AnimatedContent(
+                    targetState = currentScreen,
+                    transitionSpec = {
+                        if (targetState.ordinal > initialState.ordinal) {
+                            (slideInHorizontally(animationSpec = spring(stiffness = 380f)) { it } + fadeIn()).togetherWith(
+                                slideOutHorizontally(animationSpec = spring(stiffness = 380f)) { -it } + fadeOut()
+                            )
+                        } else {
+                            (slideInHorizontally(animationSpec = spring(stiffness = 380f)) { -it } + fadeIn()).togetherWith(
+                                slideOutHorizontally(animationSpec = spring(stiffness = 380f)) { it } + fadeOut()
+                            )
+                        }
+                    },
+                    label = "screen_transition"
+                ) { screen ->
+                    when (screen) {
+                        AppScreen.SPLASH -> SplashScreen(viewModel = viewModel)
+                        AppScreen.ONBOARDING -> OnboardingScreen(viewModel = viewModel)
+                        AppScreen.SIGN_UP -> SignUpScreen(viewModel = viewModel)
+                        AppScreen.SIGN_IN -> SignInScreen(viewModel = viewModel)
+                        AppScreen.SIGN_IN_OTP -> OtpScreen(viewModel = viewModel)
+                        AppScreen.FORGOT_PASSWORD -> ForgotPasswordScreen(viewModel = viewModel)
+                        AppScreen.DASHBOARD -> DashboardScreen(viewModel = viewModel, hasRecordPermission = hasRecordPermission)
+                    }
                 }
             }
         }
@@ -429,8 +459,8 @@ fun DashboardScreen(
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = if (highContrastMode) Color.Black else Color(0xFFFCFAF5),
-                contentColor = Color(0xFF5D4037),
+                containerColor = if (highContrastMode) Color.Black else MaterialTheme.colorScheme.surface,
+                contentColor = BeigePrimary,
                 modifier = Modifier.navigationBarsPadding()
             ) {
                 NavigationBarItem(
@@ -439,9 +469,9 @@ fun DashboardScreen(
                     icon = { Icon(Icons.Default.Dialpad, contentDescription = "Keypad") },
                     label = { Text("Keypad", fontSize = 10.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF5D4037),
-                        selectedTextColor = Color(0xFF5D4037),
-                        indicatorColor = Color(0xFFD4B483).copy(alpha = 0.4f)
+                        selectedIconColor = BeigePrimary,
+                        selectedTextColor = BeigePrimary,
+                        indicatorColor = BeigePrimary.copy(alpha = 0.18f)
                     )
                 )
                 NavigationBarItem(
@@ -462,9 +492,9 @@ fun DashboardScreen(
                     },
                     label = { Text("History", fontSize = 10.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF5D4037),
-                        selectedTextColor = Color(0xFF5D4037),
-                        indicatorColor = Color(0xFFD4B483).copy(alpha = 0.4f)
+                        selectedIconColor = BeigePrimary,
+                        selectedTextColor = BeigePrimary,
+                        indicatorColor = BeigePrimary.copy(alpha = 0.18f)
                     )
                 )
                 NavigationBarItem(
@@ -473,9 +503,9 @@ fun DashboardScreen(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Contacts") },
                     label = { Text("Contacts", fontSize = 10.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF5D4037),
-                        selectedTextColor = Color(0xFF5D4037),
-                        indicatorColor = Color(0xFFD4B483).copy(alpha = 0.4f)
+                        selectedIconColor = BeigePrimary,
+                        selectedTextColor = BeigePrimary,
+                        indicatorColor = BeigePrimary.copy(alpha = 0.18f)
                     )
                 )
                 NavigationBarItem(
@@ -484,9 +514,9 @@ fun DashboardScreen(
                     icon = { Icon(Icons.Default.Settings, contentDescription = "Bot") },
                     label = { Text("Bot Rules", fontSize = 10.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF5D4037),
-                        selectedTextColor = Color(0xFF5D4037),
-                        indicatorColor = Color(0xFFD4B483).copy(alpha = 0.4f)
+                        selectedIconColor = BeigePrimary,
+                        selectedTextColor = BeigePrimary,
+                        indicatorColor = BeigePrimary.copy(alpha = 0.18f)
                     )
                 )
                 NavigationBarItem(
@@ -495,9 +525,9 @@ fun DashboardScreen(
                     icon = { Icon(Icons.Default.SettingsApplications, contentDescription = "Settings") },
                     label = { Text("Settings", fontSize = 10.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF5D4037),
-                        selectedTextColor = Color(0xFF5D4037),
-                        indicatorColor = Color(0xFFD4B483).copy(alpha = 0.4f)
+                        selectedIconColor = BeigePrimary,
+                        selectedTextColor = BeigePrimary,
+                        indicatorColor = BeigePrimary.copy(alpha = 0.18f)
                     )
                 )
             }
@@ -507,14 +537,14 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
+                .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
         ) {
             // Header Top Bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .background(if (highContrastMode) Color.Black else Color(0xFF5D4037))
+                    .background(if (highContrastMode) Color.Black else BeigePrimary)
                     .padding(horizontal = 20.dp, vertical = 14.dp)
             ) {
                 Row(
@@ -603,7 +633,7 @@ fun DashboardScreen(
                                 text = dialerInput.ifEmpty { "Enter Number" },
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (dialerInput.isEmpty()) Color.Gray else if (highContrastMode) Color.White else Color(0xFF5D4037),
+                                color = if (dialerInput.isEmpty()) Color.Gray else if (highContrastMode) Color.White else BeigePrimary,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -620,7 +650,7 @@ fun DashboardScreen(
                                 ) {
                                     Icon(Icons.Default.Add, null, modifier = Modifier.size(14.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Add to Contacts", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Color(0xFF5D4037))
+                                    Text("Add to Contacts", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = BeigePrimary)
                                 }
                             }
                         }
@@ -650,9 +680,9 @@ fun DashboardScreen(
                                                 horizontalArrangement = Arrangement.SpaceBetween
                                             ) {
                                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                                    Icon(Icons.Default.Person, null, tint = Color(0xFF5D4037), modifier = Modifier.size(16.dp))
+                                                    Icon(Icons.Default.Person, null, tint = BeigePrimary, modifier = Modifier.size(16.dp))
                                                     Spacer(modifier = Modifier.width(8.dp))
-                                                    Text(contact.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                                                    Text(contact.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = BeigePrimary)
                                                 }
                                                 Text(contact.phoneNumber, fontSize = 11.sp, color = Color.Gray)
                                             }
@@ -699,7 +729,7 @@ fun DashboardScreen(
                                                     text = key.first,
                                                     fontSize = 20.sp,
                                                     fontWeight = FontWeight.Bold,
-                                                    color = if (highContrastMode) Color.White else Color(0xFF5D4037)
+                                                    color = if (highContrastMode) Color.White else BeigePrimary
                                                 )
                                                 if (key.second.isNotEmpty()) {
                                                     Text(
@@ -762,7 +792,7 @@ fun DashboardScreen(
                                 Icon(
                                     imageVector = Icons.Default.ArrowBack,
                                     contentDescription = "Backspace",
-                                    tint = if (dialerInput.isNotEmpty()) if (highContrastMode) Color.White else Color(0xFF5D4037) else Color.LightGray
+                                    tint = if (dialerInput.isNotEmpty()) if (highContrastMode) Color.White else BeigePrimary else Color.LightGray
                                 )
                             }
                         }
@@ -852,6 +882,11 @@ fun DashboardScreen(
                             LogDashboardHeader(logsCount = callLogs.size, highContrastMode = highContrastMode)
                         }
 
+                        // NEW: Visual Call Analytics Dashboard Card
+                        item {
+                            CallLogsAnalyticsPanel(callLogs = callLogs, highContrastMode = highContrastMode)
+                        }
+
                         // C. Logs List View
                         if (callLogs.isEmpty()) {
                             item {
@@ -938,7 +973,7 @@ fun DashboardScreen(
 
                                 Button(
                                     onClick = { showAddContactBlock = !showAddContactBlock },
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                                    colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Icon(Icons.Default.Add, null)
@@ -957,7 +992,7 @@ fun DashboardScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        Text("Create New Offline Contact", fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                                        Text("Create New Offline Contact", fontWeight = FontWeight.Bold, color = BeigePrimary)
                                         OutlinedTextField(value = newName, onValueChange = { newName = it }, label = { Text("Contact Name") }, singleLine = true)
                                         OutlinedTextField(value = newPhone, onValueChange = { newPhone = it }, label = { Text("Phone Number") }, singleLine = true)
                                         OutlinedTextField(value = newNote, onValueChange = { newNote = it }, label = { Text("Notes (Designation/Context)") }, singleLine = true)
@@ -972,7 +1007,7 @@ fun DashboardScreen(
                                                     showAddContactBlock = false
                                                 }
                                             },
-                                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                                            colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text("Save Local Contact")
@@ -986,7 +1021,7 @@ fun DashboardScreen(
                         val favorites = contactsList.filter { it.isFavorite }
                         if (favorites.isNotEmpty()) {
                             item {
-                                Text("Starred / Favorite Contacts", fontWeight = FontWeight.Black, color = Color(0xFF5D4037), fontSize = 14.sp)
+                                Text("Starred / Favorite Contacts", fontWeight = FontWeight.Black, color = BeigePrimary, fontSize = 14.sp)
                             }
 
                             items(favorites) { contact ->
@@ -1009,7 +1044,7 @@ fun DashboardScreen(
                                                     .background(Color(0xFFD4B483).copy(alpha = 0.3f), CircleShape),
                                                 contentAlignment = Alignment.Center
                                             ) {
-                                                Text(contact.name.take(2).uppercase(), fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                                                Text(contact.name.take(2).uppercase(), fontWeight = FontWeight.Bold, color = BeigePrimary)
                                             }
                                             Spacer(modifier = Modifier.width(10.dp))
                                             Column {
@@ -1038,7 +1073,7 @@ fun DashboardScreen(
 
                         // Regular Contacts Title
                         item {
-                            Text("All Local Contacts", fontWeight = FontWeight.Black, color = Color(0xFF5D4037), fontSize = 14.sp)
+                            Text("All Local Contacts", fontWeight = FontWeight.Black, color = BeigePrimary, fontSize = 14.sp)
                         }
 
                         if (contactsList.isEmpty()) {
@@ -1064,17 +1099,17 @@ fun DashboardScreen(
                                         Box(
                                             modifier = Modifier
                                                 .size(36.dp)
-                                                .background(Color(0xFF8D6E63).copy(alpha = 0.15f), CircleShape),
+                                                .background(BeigeSecondary.copy(alpha = 0.15f), CircleShape),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text(contact.name.take(2).uppercase(), fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                                            Text(contact.name.take(2).uppercase(), fontWeight = FontWeight.Bold, color = BeigePrimary)
                                         }
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Column {
                                             Text(contact.name, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                                             Text(contact.phoneNumber, fontSize = 11.sp, color = Color.Gray)
                                             if (contact.note.isNotEmpty()) {
-                                                Text(contact.note, fontSize = 9.sp, color = Color(0xFF8D6E63))
+                                                Text(contact.note, fontSize = 9.sp, color = BeigeSecondary)
                                             }
                                         }
                                     }
@@ -1125,7 +1160,7 @@ fun DashboardScreen(
 
                         // B. Priorities block
                         item {
-                            Text("Priority Routing Contact Actions", fontWeight = FontWeight.Black, color = Color(0xFF5D4037))
+                            Text("Priority Routing Contact Actions", fontWeight = FontWeight.Black, color = BeigePrimary)
                         }
 
                         item {
@@ -1150,7 +1185,7 @@ fun DashboardScreen(
 
                         // C. Telugu FAQs list
                         item {
-                            Text("Telugu AI FAQ Knowledge Database", fontWeight = FontWeight.Black, color = Color(0xFF5D4037))
+                            Text("Telugu AI FAQ Knowledge Database", fontWeight = FontWeight.Black, color = BeigePrimary)
                         }
 
                         item {
@@ -1192,7 +1227,7 @@ fun DashboardScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(54.dp)
-                                            .background(Color(0xFF5D4037), CircleShape),
+                                            .background(BeigePrimary, CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -1204,7 +1239,7 @@ fun DashboardScreen(
                                     }
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column {
-                                        Text(currentUserProfile.name, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF5D4037))
+                                        Text(currentUserProfile.name, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = BeigePrimary)
                                         Text(currentUserProfile.phone, fontSize = 12.sp, color = Color.Gray)
                                         Text(currentUserProfile.email, fontSize = 12.sp, color = Color.Gray)
                                     }
@@ -1218,7 +1253,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text("Accessibility Options", fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                                Text("Accessibility Options", fontWeight = FontWeight.Bold, color = BeigePrimary)
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -1237,6 +1272,69 @@ fun DashboardScreen(
                             }
                         }
 
+                        // AI Voice Receptionist Persona Customizer
+                        val selectedPersona by viewModel.selectedPersona.collectAsState()
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = if (highContrastMode) Color.Black else Color.White),
+                            border = BorderStroke(1.dp, if (highContrastMode) Color.White else Color(0xFFE0E0E0)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.RecordVoiceOver, null, tint = BeigePrimary, modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Telugu AI Receptionist Voice", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = BeigePrimary)
+                                }
+                                
+                                Text("Choose your preferred AI answering persona and speed:", fontSize = 12.sp, color = Color.Gray)
+                                
+                                viewModel.voicePersonas.forEach { persona ->
+                                    val isSelected = selectedPersona.id == persona.id
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                color = if (isSelected) BeigePrimary.copy(alpha = 0.12f) else Color.Transparent,
+                                                shape = RoundedCornerShape(8.dp)
+                                            )
+                                            .clickable { viewModel.selectedPersonaId.value = persona.id }
+                                            .padding(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            RadioButton(
+                                                selected = isSelected,
+                                                onClick = { viewModel.selectedPersonaId.value = persona.id },
+                                                colors = RadioButtonDefaults.colors(selectedColor = BeigePrimary)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Column {
+                                                Text(persona.name, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                                Text(persona.description, fontSize = 11.sp, color = Color.Gray)
+                                            }
+                                        }
+                                        
+                                        // Play Voice Introduction Test Button
+                                        IconButton(
+                                            onClick = { viewModel.previewVoicePersona(persona) },
+                                            modifier = Modifier.size(36.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.VolumeUp,
+                                                contentDescription = "Preview voice",
+                                                tint = BeigePrimary,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         // Simulation / Testing Controls
                         Card(
                             colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFDE7)),
@@ -1247,14 +1345,14 @@ fun DashboardScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Default.Help, null, tint = Color(0xFFF57F17))
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Simulation Portal (Interactive Testing)", fontWeight = FontWeight.Black, color = Color(0xFF5D4037))
+                                    Text("Simulation Portal (Interactive Testing)", fontWeight = FontWeight.Black, color = BeigePrimary)
                                 }
 
                                 Text("Test your Telugu Answering and Missed call alerts instantly:", fontSize = 12.sp)
 
                                 Button(
                                     onClick = { viewModel.simulateCall("+91 94405 12345", "Kalyan Ram", "SIM") },
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                                    colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text("Simulate Incoming SIM Call", fontWeight = FontWeight.Bold, color = Color.White)
@@ -1285,12 +1383,12 @@ fun DashboardScreen(
                         // Sign Out Button to return to Splash/Auth screens
                         OutlinedButton(
                             onClick = { viewModel.currentScreen.value = AppScreen.SPLASH },
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF5D4037)),
-                            border = BorderStroke(1.dp, Color(0xFF5D4037)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = BeigePrimary),
+                            border = BorderStroke(1.dp, BeigePrimary),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.ExitToApp, contentDescription = "Sign Out", tint = Color(0xFF5D4037))
+                                Icon(Icons.Default.ExitToApp, contentDescription = "Sign Out", tint = BeigePrimary)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Sign Out (Go to Splash / Login)", fontWeight = FontWeight.Bold)
                             }
@@ -2343,6 +2441,282 @@ fun LogDashboardHeader(
     }
 }
 
+// --- VISUAL CALL LOGS ANALYTICS PANEL (Canvas donut + channel telemetry) ---
+@Composable
+fun CallLogsAnalyticsPanel(
+    callLogs: List<DecryptedCallLog>,
+    highContrastMode: Boolean
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = if (highContrastMode) Color.Black else Color.White),
+        border = BorderStroke(1.dp, if (highContrastMode) Color.White else Color(0xFFD4B483).copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Toggle Header Row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Analytics,
+                        contentDescription = "Analytics",
+                        tint = BeigePrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Real-time Call Analytics",
+                        fontWeight = FontWeight.Black,
+                        fontSize = 14.sp,
+                        color = BeigePrimary
+                    )
+                }
+                
+                IconButton(onClick = { isExpanded = !isExpanded }, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = "Toggle",
+                        tint = BeigePrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+            
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                if (callLogs.isEmpty()) {
+                    Text(
+                        text = "No call logs yet to analyze. Try simulating a call first!",
+                        fontSize = 11.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                } else {
+                    // Compute statistics
+                    val totalCalls = callLogs.size
+                    val aiAnsweredCount = callLogs.count { it.status == "Answered by AI" }
+                    val bypassedCount = callLogs.count { it.status == "Bypassed" }
+                    val autoRepliedCount = callLogs.count { it.status == "Auto-Replied" || it.status == "Rejected" }
+                    val missedCount = totalCalls - aiAnsweredCount - bypassedCount - autoRepliedCount
+                    
+                    val simCount = callLogs.count { it.callType == "SIM" }
+                    val whatsappCount = callLogs.count { it.callType == "WhatsApp" }
+                    
+                    // Display Row of Stat Pill Chips
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                                .border(0.5.dp, BeigePrimary.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Answered by AI", fontSize = 9.sp, color = Color.Gray, maxLines = 1)
+                            Text("$aiAnsweredCount", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = BeigePrimary)
+                        }
+                        
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                                .border(0.5.dp, BeigePrimary.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Bypassed Bot", fontSize = 9.sp, color = Color.Gray, maxLines = 1)
+                            Text("$bypassedCount", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0288D1))
+                        }
+                        
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                                .border(0.5.dp, BeigePrimary.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Auto-Action", fontSize = 9.sp, color = Color.Gray, maxLines = 1)
+                            Text("$autoRepliedCount", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF388E3C))
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Beautiful Custom Donut Chart + Legends
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Jetpack Compose Canvas Donut Chart
+                        Box(
+                            modifier = Modifier
+                                .size(110.dp)
+                                .padding(4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            androidx.compose.foundation.Canvas(modifier = Modifier.size(100.dp)) {
+                                val strokeWidth = 14.dp.toPx()
+                                val aiSweep = if (totalCalls > 0) (aiAnsweredCount.toFloat() / totalCalls) * 360f else 0f
+                                val bypassedSweep = if (totalCalls > 0) (bypassedCount.toFloat() / totalCalls) * 360f else 0f
+                                val autoSweep = if (totalCalls > 0) (autoRepliedCount.toFloat() / totalCalls) * 360f else 0f
+                                val missedSweep = if (totalCalls > 0) (missedCount.coerceAtLeast(0).toFloat() / totalCalls) * 360f else 0f
+                                
+                                var startAngle = -90f
+                                
+                                // Draw AI segment (BeigePrimary / Orange Accent)
+                                if (aiSweep > 0) {
+                                    drawArc(
+                                        color = Color(0xFFE5A93B),
+                                        startAngle = startAngle,
+                                        sweepAngle = aiSweep,
+                                        useCenter = false,
+                                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+                                    )
+                                    startAngle += aiSweep
+                                }
+                                
+                                // Draw Bypassed segment (Blue Accent)
+                                if (bypassedSweep > 0) {
+                                    drawArc(
+                                        color = Color(0xFF0288D1),
+                                        startAngle = startAngle,
+                                        sweepAngle = bypassedSweep,
+                                        useCenter = false,
+                                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+                                    )
+                                    startAngle += bypassedSweep
+                                }
+                                
+                                // Draw Auto-Replied segment (Green Accent)
+                                if (autoSweep > 0) {
+                                    drawArc(
+                                        color = Color(0xFF388E3C),
+                                        startAngle = startAngle,
+                                        sweepAngle = autoSweep,
+                                        useCenter = false,
+                                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+                                    )
+                                    startAngle += autoSweep
+                                }
+                                
+                                // Draw Missed segment (Red Accent)
+                                if (missedSweep > 0) {
+                                    drawArc(
+                                        color = Color(0xFFEF5350),
+                                        startAngle = startAngle,
+                                        sweepAngle = missedSweep,
+                                        useCenter = false,
+                                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+                                    )
+                                }
+                            }
+                            
+                            // Center Text of Donut
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("$totalCalls", fontSize = 16.sp, fontWeight = FontWeight.Black, color = BeigePrimary)
+                                Text("Total Calls", fontSize = 8.sp, color = Color.Gray)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.width(16.dp))
+                        
+                        // Legends and percentages
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text("Call Distribution Status:", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            
+                            LegendItem(color = Color(0xFFE5A93B), label = "AI Answered: ${if (totalCalls > 0) (aiAnsweredCount * 100 / totalCalls) else 0}%")
+                            LegendItem(color = Color(0xFF0288D1), label = "Bypassed: ${if (totalCalls > 0) (bypassedCount * 100 / totalCalls) else 0}%")
+                            LegendItem(color = Color(0xFF388E3C), label = "Auto-Action: ${if (totalCalls > 0) (autoRepliedCount * 100 / totalCalls) else 0}%")
+                            if (missedCount > 0) {
+                                LegendItem(color = Color(0xFFEF5350), label = "Other/Missed: ${if (totalCalls > 0) (missedCount * 100 / totalCalls) else 0}%")
+                            }
+                        }
+                    }
+                    
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color.LightGray.copy(alpha = 0.3f))
+                    
+                    // Channel Telemetry Sizing
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Channel Origin Analytics", 
+                            fontSize = 11.sp, 
+                            fontWeight = FontWeight.Bold, 
+                            modifier = Modifier.padding(bottom = 6.dp)
+                        )
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            // SIM Telephony Bar
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                                    Text("SIM Telephony", fontSize = 10.sp, color = Color.Gray)
+                                    Text("$simCount", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                LinearProgressIndicator(
+                                    progress = { if (totalCalls > 0) simCount.toFloat() / totalCalls else 0f },
+                                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(CircleShape),
+                                    color = BeigePrimary,
+                                    trackColor = Color.LightGray.copy(alpha = 0.2f)
+                                )
+                            }
+                            
+                            // WhatsApp Bar
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                                    Text("WhatsApp", fontSize = 10.sp, color = Color.Gray)
+                                    Text("$whatsappCount", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                LinearProgressIndicator(
+                                    progress = { if (totalCalls > 0) whatsappCount.toFloat() / totalCalls else 0f },
+                                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(CircleShape),
+                                    color = Color(0xFF25D366),
+                                    trackColor = Color.LightGray.copy(alpha = 0.2f)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LegendItem(color: Color, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(color, CircleShape)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(text = label, fontSize = 10.sp, color = Color.DarkGray)
+    }
+}
+
 // --- NEW SCREENS & HIGHFIDELITY COMPOSABLES ---
 
 // 1. SPLASH SCREEN (Beige Theme)
@@ -2370,10 +2744,34 @@ fun SplashScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
-            .padding(24.dp),
+            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
+            .padding(24.dp)
+            .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
+        // Floating Skip to Dashboard Button
+        Button(
+            onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
+                contentColor = if (highContrastMode) Color.White else BeigePrimary
+            ),
+            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .testTag("skip_to_dashboard_splash")
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Skip",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -2391,7 +2789,7 @@ fun SplashScreen(viewModel: AppViewModel) {
                 Icon(
                     imageVector = Icons.Default.Shield,
                     contentDescription = "Logo",
-                    tint = Color(0xFF5D4037),
+                    tint = BeigePrimary,
                     modifier = Modifier.size(56.dp)
                 )
             }
@@ -2402,7 +2800,7 @@ fun SplashScreen(viewModel: AppViewModel) {
                 text = "MB CONNECT",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else Color(0xFF5D4037),
+                color = if (highContrastMode) Color.White else BeigePrimary,
                 letterSpacing = 3.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -2410,7 +2808,7 @@ fun SplashScreen(viewModel: AppViewModel) {
                 text = "Secure Telugu AI Call Assistant",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = if (highContrastMode) Color.White else Color(0xFF8D6E63),
+                color = if (highContrastMode) Color.White else BeigeSecondary,
                 letterSpacing = 1.sp,
                 textAlign = TextAlign.Center
             )
@@ -2419,7 +2817,7 @@ fun SplashScreen(viewModel: AppViewModel) {
 
             // Elegant indicator
             CircularProgressIndicator(
-                color = Color(0xFF5D4037),
+                color = BeigePrimary,
                 strokeWidth = 3.dp,
                 modifier = Modifier.size(24.dp)
             )
@@ -2428,7 +2826,7 @@ fun SplashScreen(viewModel: AppViewModel) {
 
             TextButton(
                 onClick = { currentScreen.value = AppScreen.ONBOARDING },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF5D4037))
+                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
             ) {
                 Text("Skip Intro →", fontWeight = FontWeight.Bold, fontSize = 13.sp)
             }
@@ -2465,22 +2863,46 @@ fun OnboardingScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
+            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
             .padding(24.dp)
             .navigationBarsPadding()
             .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        // Skip Button
+        // Skip Buttons Row
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             TextButton(
                 onClick = { viewModel.currentScreen.value = AppScreen.SIGN_UP },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF5D4037))
+                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
             ) {
-                Text("Skip", fontWeight = FontWeight.Bold)
+                Text("Skip Onboarding", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            }
+
+            Button(
+                onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
+                    contentColor = if (highContrastMode) Color.White else BeigePrimary
+                ),
+                border = BorderStroke(1.dp, Color(0xFFD4B483)),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.testTag("skip_to_dashboard_onboarding")
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "Skip",
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
             }
         }
 
@@ -2501,7 +2923,7 @@ fun OnboardingScreen(viewModel: AppViewModel) {
                 Icon(
                     imageVector = activeSlide.first,
                     contentDescription = null,
-                    tint = Color(0xFF5D4037),
+                    tint = BeigePrimary,
                     modifier = Modifier.size(44.dp)
                 )
             }
@@ -2512,7 +2934,7 @@ fun OnboardingScreen(viewModel: AppViewModel) {
                 text = activeSlide.second,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else Color(0xFF5D4037),
+                color = if (highContrastMode) Color.White else BeigePrimary,
                 textAlign = TextAlign.Center
             )
 
@@ -2521,7 +2943,7 @@ fun OnboardingScreen(viewModel: AppViewModel) {
             Text(
                 text = activeSlide.third,
                 fontSize = 14.sp,
-                color = if (highContrastMode) Color.White else Color(0xFF5D4037).copy(alpha = 0.8f),
+                color = if (highContrastMode) Color.White else BeigePrimary.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center,
                 lineHeight = 22.sp
             )
@@ -2538,7 +2960,7 @@ fun OnboardingScreen(viewModel: AppViewModel) {
                         modifier = Modifier
                             .size(if (currentSlide == index) 16.dp else 8.dp, 8.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .background(if (currentSlide == index) Color(0xFF5D4037) else Color(0xFFD4B483))
+                            .background(if (currentSlide == index) BeigePrimary else Color(0xFFD4B483))
                     )
                 }
             }
@@ -2553,7 +2975,7 @@ fun OnboardingScreen(viewModel: AppViewModel) {
                     viewModel.currentScreen.value = AppScreen.SIGN_UP
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+            colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -2582,12 +3004,36 @@ fun SignUpScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
+            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Floating Skip to Dashboard Button
+        Button(
+            onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
+                contentColor = if (highContrastMode) Color.White else BeigePrimary
+            ),
+            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .testTag("skip_to_dashboard_signup")
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Skip",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -2597,7 +3043,7 @@ fun SignUpScreen(viewModel: AppViewModel) {
             Icon(
                 imageVector = Icons.Default.Shield,
                 contentDescription = null,
-                tint = Color(0xFF5D4037),
+                tint = BeigePrimary,
                 modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -2605,12 +3051,12 @@ fun SignUpScreen(viewModel: AppViewModel) {
                 text = "Create Secure Account",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else Color(0xFF5D4037)
+                color = if (highContrastMode) Color.White else BeigePrimary
             )
             Text(
                 text = "Configure your offline voice assistant dialer",
                 fontSize = 12.sp,
-                color = if (highContrastMode) Color.White else Color(0xFF8D6E63)
+                color = if (highContrastMode) Color.White else BeigeSecondary
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -2670,7 +3116,7 @@ fun SignUpScreen(viewModel: AppViewModel) {
                         Text(
                             text = "I agree to local AES GCM encryption guidelines.",
                             fontSize = 11.sp,
-                            color = Color(0xFF8D6E63)
+                            color = BeigeSecondary
                         )
                     }
 
@@ -2683,7 +3129,7 @@ fun SignUpScreen(viewModel: AppViewModel) {
                             }
                         },
                         enabled = agreed && fullName.isNotBlank() && phone.isNotBlank(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                        colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -2700,7 +3146,7 @@ fun SignUpScreen(viewModel: AppViewModel) {
                 onClick = { 
                     viewModel.currentScreen.value = AppScreen.SIGN_IN
                 },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF5D4037))
+                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
             ) {
                 Text("Already registered? Sign In with WhatsApp OTP", fontWeight = FontWeight.Bold)
             }
@@ -2718,12 +3164,36 @@ fun SignInScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
+            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Floating Skip to Dashboard Button
+        Button(
+            onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
+                contentColor = if (highContrastMode) Color.White else BeigePrimary
+            ),
+            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .testTag("skip_to_dashboard_signin")
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Skip",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -2748,13 +3218,13 @@ fun SignInScreen(viewModel: AppViewModel) {
                 text = "Sign In with WhatsApp",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else Color(0xFF5D4037)
+                color = if (highContrastMode) Color.White else BeigePrimary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "We'll send a 4-digit security code to your WhatsApp",
                 fontSize = 12.sp,
-                color = if (highContrastMode) Color.White else Color(0xFF8D6E63),
+                color = if (highContrastMode) Color.White else BeigeSecondary,
                 textAlign = TextAlign.Center
             )
 
@@ -2771,7 +3241,7 @@ fun SignInScreen(viewModel: AppViewModel) {
                         text = "Enter Your WhatsApp Number",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF5D4037)
+                        color = BeigePrimary
                     )
 
                     OutlinedTextField(
@@ -2783,7 +3253,7 @@ fun SignInScreen(viewModel: AppViewModel) {
                                 modifier = Modifier.padding(start = 12.dp, end = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("+91", fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                                Text("+91", fontWeight = FontWeight.Bold, color = BeigePrimary)
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.Gray))
                             }
@@ -2829,12 +3299,12 @@ fun SignInScreen(viewModel: AppViewModel) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("New here?", fontSize = 13.sp, color = Color(0xFF8D6E63))
+                Text("New here?", fontSize = 13.sp, color = BeigeSecondary)
                 TextButton(
                     onClick = { 
                         viewModel.currentScreen.value = AppScreen.SIGN_UP 
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF5D4037))
+                    colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
                 ) {
                     Text("Create An Account", fontWeight = FontWeight.Bold)
                 }
@@ -2857,12 +3327,36 @@ fun OtpScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
+            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(24.dp),
         contentAlignment = Alignment.TopCenter
     ) {
+        // Floating Skip to Dashboard Button
+        Button(
+            onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
+                contentColor = if (highContrastMode) Color.White else BeigePrimary
+            ),
+            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .testTag("skip_to_dashboard_otp")
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Skip",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+        }
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -2908,14 +3402,14 @@ fun OtpScreen(viewModel: AppViewModel) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Icon(Icons.Default.Security, null, tint = Color(0xFF5D4037), modifier = Modifier.size(56.dp))
+            Icon(Icons.Default.Security, null, tint = BeigePrimary, modifier = Modifier.size(56.dp))
             Spacer(modifier = Modifier.height(16.dp))
-            Text("OTP Verification", fontSize = 24.sp, fontWeight = FontWeight.Black, color = if (highContrastMode) Color.White else Color(0xFF5D4037))
+            Text("OTP Verification", fontSize = 24.sp, fontWeight = FontWeight.Black, color = if (highContrastMode) Color.White else BeigePrimary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 "We sent a simulated WhatsApp OTP to $phoneNum",
                 fontSize = 13.sp,
-                color = if (highContrastMode) Color.White else Color(0xFF8D6E63),
+                color = if (highContrastMode) Color.White else BeigeSecondary,
                 textAlign = TextAlign.Center
             )
 
@@ -2957,7 +3451,7 @@ fun OtpScreen(viewModel: AppViewModel) {
                                 Toast.makeText(context, "Welcome, verified securely!", Toast.LENGTH_SHORT).show()
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                        colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -2979,12 +3473,12 @@ fun OtpScreen(viewModel: AppViewModel) {
                                 Toast.makeText(context, "New simulated WhatsApp code sent!", Toast.LENGTH_SHORT).show()
                             }
                         ) {
-                            Text("Resend OTP Code", fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                            Text("Resend OTP Code", fontWeight = FontWeight.Bold, color = BeigePrimary)
                         }
                         TextButton(
                             onClick = { viewModel.currentScreen.value = AppScreen.FORGOT_PASSWORD }
                         ) {
-                            Text("Forgot Security PIN?", color = Color(0xFF8D6E63))
+                            Text("Forgot Security PIN?", color = BeigeSecondary)
                         }
                     }
                 }
@@ -2994,7 +3488,7 @@ fun OtpScreen(viewModel: AppViewModel) {
 
             TextButton(
                 onClick = { viewModel.currentScreen.value = AppScreen.SIGN_IN },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF5D4037))
+                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
             ) {
                 Text("← Change Phone Number")
             }
@@ -3012,7 +3506,7 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else Color(0xFFF7F4EB))
+            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .padding(24.dp),
         contentAlignment = Alignment.Center
@@ -3021,10 +3515,10 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(Icons.Default.Help, null, tint = Color(0xFF5D4037), modifier = Modifier.size(56.dp))
+            Icon(Icons.Default.Help, null, tint = BeigePrimary, modifier = Modifier.size(56.dp))
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Recovery Portal", fontSize = 24.sp, fontWeight = FontWeight.Black, color = if (highContrastMode) Color.White else Color(0xFF5D4037))
-            Text("Recover your dialer security keys & credentials", fontSize = 12.sp, color = Color(0xFF8D6E63))
+            Text("Recovery Portal", fontSize = 24.sp, fontWeight = FontWeight.Black, color = if (highContrastMode) Color.White else BeigePrimary)
+            Text("Recover your dialer security keys & credentials", fontSize = 12.sp, color = BeigeSecondary)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -3046,7 +3540,7 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
                     Button(
                         onClick = { successAlert = true },
                         enabled = emailInput.isNotBlank(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5D4037)),
+                        colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -3076,7 +3570,7 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
 
             TextButton(
                 onClick = { viewModel.currentScreen.value = AppScreen.SIGN_IN },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF5D4037))
+                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
             ) {
                 Text("← Return to Sign-in Screen")
             }

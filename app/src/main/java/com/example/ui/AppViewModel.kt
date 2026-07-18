@@ -46,10 +46,32 @@ data class MissedCallAlert(
     val timestamp: Long = System.currentTimeMillis()
 )
 
+// --- VOICE PERSONA CONFIGURATION ---
+data class VoicePersona(
+    val id: String,
+    val name: String,
+    val description: String,
+    val pitch: Float,
+    val rate: Float,
+    val introText: String
+)
+
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
     private val repository = DataRepository(database)
     val callAnsweringService = CallAnsweringService(application, repository)
+
+    // --- VOICE PERSONA STATES ---
+    val voicePersonas = listOf(
+        VoicePersona("priya", "Priya (Professional)", "Polite, standard female receptionist voice.", 1.15f, 0.95f, "నమస్కారం, నేను ప్రియను. మీ ఫోన్ అసిస్టెంట్ ని."),
+        VoicePersona("sravani", "Sravani (Friendly)", "Lively, high-pitch and friendly female voice.", 1.30f, 1.05f, "నమస్కారం! నేను స్రవంతిని, మీతో మాట్లాడటం చాలా సంతోషంగా ఉంది."),
+        VoicePersona("kavitha", "Kavitha (Calm)", "Soothing, relaxed and warm female voice.", 1.05f, 0.80f, "నమస్కారం, నేను కవితను. నిదానంగా మరియు స్పష్టంగా సమాధానం ఇస్తాను."),
+        VoicePersona("kalyan", "Kalyan (Formal)", "Deep, corporate and respectful low-pitch voice.", 0.80f, 0.95f, "నమస్కారం అండి, నేను కల్యాణ్ ని. మా కస్టమర్ సర్వీస్ కు స్వాగతం.")
+    )
+    val selectedPersonaId = MutableStateFlow("priya")
+    val selectedPersona = selectedPersonaId.map { id ->
+        voicePersonas.firstOrNull { it.id == id } ?: voicePersonas.first()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), voicePersonas.first())
 
     // --- NAVIGATION STATE ---
     val currentScreen = MutableStateFlow(AppScreen.SPLASH)
@@ -149,6 +171,18 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         seedDefaultContacts()
+
+        // Sync selected voice persona pitch and rate to CallAnsweringService
+        viewModelScope.launch {
+            selectedPersona.collect { persona ->
+                callAnsweringService.activePitch = persona.pitch
+                callAnsweringService.activeRate = persona.rate
+            }
+        }
+    }
+
+    fun previewVoicePersona(persona: VoicePersona) {
+        callAnsweringService.speakDirectly(persona.introText, persona.pitch, persona.rate)
     }
 
     private suspend fun seedDefaultFaqs() {

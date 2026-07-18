@@ -36,6 +36,9 @@ class CallAnsweringService(
     private var recordingFile: File? = null
     private var isTtsInitialized = false
 
+    var activePitch: Float = 1.15f
+    var activeRate: Float = 0.95f
+
     private val _currentCallState = MutableStateFlow<CallState>(CallState.Idle)
     val currentCallState: StateFlow<CallState> = _currentCallState
 
@@ -213,12 +216,26 @@ class CallAnsweringService(
 
     private fun speakBotResponse(text: String, onDone: () -> Unit) {
         if (isTtsInitialized && ttsHelper != null) {
+            ttsHelper?.updateSpeechCharacteristics(activePitch, activeRate)
             ttsHelper?.speak(text, onDone)
         } else {
             Log.w("CallAnsweringService", "TTS not ready, calling completion immediately.")
             scope.launch {
                 delay(3000) // Simulate speech reading time
                 onDone()
+            }
+        }
+    }
+
+    fun speakDirectly(text: String, pitch: Float, rate: Float) {
+        scope.launch {
+            if (isTtsInitialized && ttsHelper != null) {
+                ttsHelper?.updateSpeechCharacteristics(pitch, rate)
+                ttsHelper?.speak(text) {
+                    Log.d("CallAnsweringService", "Direct preview speaking complete.")
+                }
+            } else {
+                Log.w("CallAnsweringService", "TTS not ready for direct speech preview.")
             }
         }
     }

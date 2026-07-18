@@ -114,6 +114,16 @@ class TeluguTtsHelper(
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "MBConnectUtterance")
     }
 
+    fun updateSpeechCharacteristics(pitch: Float, rate: Float) {
+        try {
+            tts?.setPitch(pitch)
+            tts?.setSpeechRate(rate)
+            Log.d("TeluguTtsHelper", "Speech characteristics updated. Pitch: $pitch, Rate: $rate")
+        } catch (e: Exception) {
+            Log.e("TeluguTtsHelper", "Error updating speech characteristics: ${e.message}")
+        }
+    }
+
     fun stop() {
         tts?.stop()
     }
