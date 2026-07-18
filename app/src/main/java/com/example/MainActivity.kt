@@ -64,11 +64,11 @@ import java.util.*
 
 val BeigePrimary: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) Color(0xFF0DDE9F) else Color(0xFF2563EB) // Modern Mint Green vs Vibrant Sapphire Blue
+    get() = MaterialTheme.colorScheme.primary
 
 val BeigeSecondary: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) Color(0xFF38BDF8) else Color(0xFF0F172A) // Sky Blue vs Midnight Deep Slate
+    get() = MaterialTheme.colorScheme.secondary
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -2727,108 +2727,152 @@ fun SplashScreen(viewModel: AppViewModel) {
 
     val infiniteTransition = rememberInfiniteTransition(label = "splash")
     val scale by infiniteTransition.animateFloat(
-        initialValue = 0.9f,
-        targetValue = 1.1f,
+        initialValue = 0.95f,
+        targetValue = 1.05f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = LinearEasing),
+            animation = tween(1200, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "scale"
     )
 
     LaunchedEffect(Unit) {
-        delay(2000)
+        delay(2500)
         currentScreen.value = AppScreen.ONBOARDING
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
-            .padding(24.dp)
-            .statusBarsPadding(),
+            .background(if (highContrastMode) Color.Black else Color(0xFF803003)) // Rich deep brown/chocolate from Figma
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        // Floating Skip to Dashboard Button
+        // Floating Skip to Dashboard Button (Subtle and integrated)
         Button(
             onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
-                contentColor = if (highContrastMode) Color.White else BeigePrimary
+                containerColor = Color.White.copy(alpha = 0.12f),
+                contentColor = Color.White
             ),
-            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .align(Alignment.TopEnd)
+                .padding(16.dp)
                 .testTag("skip_to_dashboard_splash")
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text("Skip to App", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = Icons.Default.ArrowForward,
                     contentDescription = "Skip",
+                    tint = Color.White,
                     modifier = Modifier.size(12.dp)
                 )
             }
         }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
         ) {
-            // Pulsing Gold Emblem
+            // High-fidelity crown crest logo inside beautiful circle from Image 2
             Box(
                 modifier = Modifier
-                    .size(130.dp)
+                    .size(120.dp)
                     .scale(scale)
-                    .background(Color(0xFFD4B483).copy(alpha = 0.15f), CircleShape)
-                    .border(2.dp, Color(0xFFD4B483), CircleShape),
+                    .background(Color.White.copy(alpha = 0.08f), CircleShape)
+                    .border(1.5.dp, Color.White.copy(alpha = 0.3f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Shield,
-                    contentDescription = "Logo",
-                    tint = BeigePrimary,
-                    modifier = Modifier.size(56.dp)
+                    imageVector = Icons.Default.AllInclusive,
+                    contentDescription = "Crest Logo",
+                    tint = Color.White,
+                    modifier = Modifier.size(54.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // Bold "MB Connect" heading
+            Text(
+                text = "MB Connect",
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Black,
+                color = Color.White,
+                letterSpacing = 1.5.sp,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Making Brands Branding subtitle
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Making Brands",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White.copy(alpha = 0.9f),
+                    letterSpacing = 0.5.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "MB CONNECT",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else BeigePrimary,
-                letterSpacing = 3.sp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Secure Telugu AI Call Assistant",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (highContrastMode) Color.White else BeigeSecondary,
-                letterSpacing = 1.sp,
+                text = "Connecting Brands to the World",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White.copy(alpha = 0.7f),
+                letterSpacing = 0.8.sp,
                 textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(64.dp))
 
-            // Elegant indicator
-            CircularProgressIndicator(
-                color = BeigePrimary,
-                strokeWidth = 3.dp,
-                modifier = Modifier.size(24.dp)
-            )
+            // Custom smooth infinite progress bar
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(3.dp)
+                    .background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(1.5.dp))
+            ) {
+                val progressTransition = rememberInfiniteTransition(label = "progress")
+                val progressOffset by progressTransition.animateFloat(
+                    initialValue = 0f,
+                    targetValue = 80f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(1400, easing = FastOutSlowInEasing),
+                        repeatMode = RepeatMode.Restart
+                    ),
+                    label = "progressOffset"
+                )
+                Box(
+                    modifier = Modifier
+                        .offset(x = progressOffset.dp)
+                        .width(40.dp)
+                        .fillMaxHeight()
+                        .background(Color.White, RoundedCornerShape(1.5.dp))
+                )
+            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             TextButton(
                 onClick = { currentScreen.value = AppScreen.ONBOARDING },
-                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
+                colors = ButtonDefaults.textButtonColors(contentColor = Color.White.copy(alpha = 0.8f))
             ) {
-                Text("Skip Intro →", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                Text("Get Started →", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.White)
             }
         }
     }
@@ -2860,140 +2904,237 @@ fun OnboardingScreen(viewModel: AppViewModel) {
 
     val activeSlide = slides[currentSlide]
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
-            .padding(24.dp)
-            .navigationBarsPadding()
-            .statusBarsPadding(),
-        contentAlignment = Alignment.Center
-    ) {
-        // Skip Buttons Row
-        Row(
+    if (highContrastMode) {
+        // Accessibility simple layout
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(Color.Black)
+                .padding(24.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+            contentAlignment = Alignment.Center
         ) {
-            TextButton(
-                onClick = { viewModel.currentScreen.value = AppScreen.SIGN_UP },
-                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
-            ) {
-                Text("Skip Onboarding", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-            }
-
-            Button(
-                onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
-                    contentColor = if (highContrastMode) Color.White else BeigePrimary
-                ),
-                border = BorderStroke(1.dp, Color(0xFFD4B483)),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.testTag("skip_to_dashboard_onboarding")
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "Skip",
-                        modifier = Modifier.size(12.dp)
-                    )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(activeSlide.second, fontSize = 24.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(activeSlide.third, fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(32.dp))
+                Button(onClick = {
+                    if (currentSlide < slides.size - 1) currentSlide++ else viewModel.currentScreen.value = AppScreen.SIGN_UP
+                }) {
+                    Text("Next")
                 }
             }
         }
-
-        // Active Slide Content
+    } else {
+        // Ultra-high fidelity split screen layout matching Image 4 & 5
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .align(Alignment.Center)
+                .fillMaxSize()
+                .background(Color(0xFFD4A373)) // Warm sandy/tan top portion
         ) {
+            // Upper Section: Sandy/tan backdrop with bold white displays
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(Color(0xFFD4B483).copy(alpha = 0.2f), CircleShape),
+                    .weight(1.1f)
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = activeSlide.first,
-                    contentDescription = null,
-                    tint = BeigePrimary,
-                    modifier = Modifier.size(44.dp)
-                )
-            }
+                // Skip Button at top corner
+                TextButton(
+                    onClick = { viewModel.currentScreen.value = AppScreen.SIGN_UP },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.White.copy(alpha = 0.85f)),
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Text("Skip", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = activeSlide.second,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else BeigePrimary,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = activeSlide.third,
-                fontSize = 14.sp,
-                color = if (highContrastMode) Color.White else BeigePrimary.copy(alpha = 0.8f),
-                textAlign = TextAlign.Center,
-                lineHeight = 22.sp
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Slide Dots Indicators
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                slides.forEachIndexed { index, _ ->
-                    Box(
-                        modifier = Modifier
-                            .size(if (currentSlide == index) 16.dp else 8.dp, 8.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(if (currentSlide == index) BeigePrimary else Color(0xFFD4B483))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = when (currentSlide) {
+                            0 -> "Welcome To"
+                            1 -> "Are You Ready To"
+                            else -> "Ready to Control"
+                        },
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.5.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = when (currentSlide) {
+                            0 -> "MB Connect"
+                            1 -> "Take Control Of Calls?"
+                            else -> "Your Private Calls?"
+                        },
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.5.sp
                     )
                 }
             }
-        }
 
-        // Action controls
-        Button(
-            onClick = {
-                if (currentSlide < slides.size - 1) {
-                    currentSlide++
-                } else {
-                    viewModel.currentScreen.value = AppScreen.SIGN_UP
+            // Lower Section: High Rounded Corner Container in Cream/Peach color
+            Card(
+                modifier = Modifier
+                    .weight(1.6f)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(topStart = 48.dp, topEnd = 48.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF9EAE1)), // Peach-cream background
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 32.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Circular Emblem Frame with layered shadow
+                    Box(
+                        modifier = Modifier
+                            .size(160.dp)
+                            .background(Color(0xFFB4835F).copy(alpha = 0.16f), CircleShape)
+                            .border(1.5.dp, Color(0xFFB4835F).copy(alpha = 0.25f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (currentSlide == 0) {
+                            // Image 4 style: Blue badge with "AI"
+                            Box(
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .background(Color(0xFF38BDF8), RoundedCornerShape(18.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "AI",
+                                    fontSize = 44.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.White
+                                )
+                            }
+                        } else if (currentSlide == 1) {
+                            // Image 5 style: Phone with green checkmark
+                            Box(
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .background(Color.White, CircleShape)
+                                    .border(1.5.dp, Color(0xFFE2F3E8), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PhoneAndroid,
+                                    contentDescription = null,
+                                    tint = Color(0xFF2563EB),
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        } else {
+                            // Lock icon
+                            Box(
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .background(Color(0xFF803003).copy(alpha = 0.1f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = null,
+                                    tint = Color(0xFF803003),
+                                    modifier = Modifier.size(44.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Headline + description
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    ) {
+                        Text(
+                            text = activeSlide.second,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF0F4C3A), // Deep dark teal from Figma design
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = activeSlide.third,
+                            fontSize = 13.sp,
+                            color = Color(0xFF6B7280), // Sleek neutral description grey
+                            textAlign = TextAlign.Center,
+                            lineHeight = 20.sp
+                        )
+                    }
+
+                    // Controls Column: "Next" action + slide dots
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        TextButton(
+                            onClick = {
+                                if (currentSlide < slides.size - 1) {
+                                    currentSlide++
+                                } else {
+                                    viewModel.currentScreen.value = AppScreen.SIGN_UP
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = if (currentSlide == slides.size - 1) "Get Started" else "Next",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF0F4C3A) // Figma teal-mint text
+                            )
+                        }
+
+                        // Slide Dots Indicators
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            slides.forEachIndexed { index, _ ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (currentSlide == index) Color(0xFF0F4C3A) else Color.Transparent
+                                        )
+                                        .border(
+                                            1.dp,
+                                            Color(0xFF0F4C3A),
+                                            CircleShape
+                                        )
+                                )
+                            }
+                        }
+                    }
                 }
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-        ) {
-            Text(
-                text = if (currentSlide == slides.size - 1) "Get Started" else "Next Feature",
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            }
         }
     }
 }
 
-// 3. SIGN UP SCREEN
+// 3. SIGN UP SCREEN (Figma Gateway & Sign Up Form integrated)
 @Composable
 fun SignUpScreen(viewModel: AppViewModel) {
     val highContrastMode by viewModel.isHighContrastMode.collectAsState()
+    var showGateway by remember { mutableStateOf(true) }
 
     var fullName by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -3001,154 +3142,318 @@ fun SignUpScreen(viewModel: AppViewModel) {
     var password by remember { mutableStateOf("") }
     var agreed by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        // Floating Skip to Dashboard Button
-        Button(
-            onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
-                contentColor = if (highContrastMode) Color.White else BeigePrimary
-            ),
-            border = BorderStroke(1.dp, Color(0xFFD4B483)),
-            shape = RoundedCornerShape(12.dp),
+    if (!highContrastMode && showGateway) {
+        // --- FIGMA GATEWAY SCREEN (Image 3) ---
+        Box(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .testTag("skip_to_dashboard_signup")
+                .fillMaxSize()
+                .background(Color(0xFFD4A373)) // Rich warm golden-tan background
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Skip",
-                    modifier = Modifier.size(12.dp)
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(androidx.compose.foundation.rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.Shield,
-                contentDescription = null,
-                tint = BeigePrimary,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Create Secure Account",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else BeigePrimary
-            )
-            Text(
-                text = "Configure your offline voice assistant dialer",
-                fontSize = 12.sp,
-                color = if (highContrastMode) Color.White else BeigeSecondary
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = if (highContrastMode) Color.Black else Color(0xFFFCFAF5)),
-                border = BorderStroke(1.dp, if (highContrastMode) Color.White else Color(0xFFD4B483).copy(alpha = 0.5f)),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+            // Floating Skip Button
+            Button(
+                onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White.copy(alpha = 0.15f),
+                    contentColor = Color.White
+                ),
+                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .testTag("skip_to_dashboard_signup_gateway")
             ) {
-                Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
-                        value = fullName,
-                        onValueChange = { fullName = it },
-                        label = { Text("Full Name") },
-                        leadingIcon = { Icon(Icons.Default.Person, null) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
+                Text("Skip to App", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            }
 
-                    OutlinedTextField(
-                        value = phone,
-                        onValueChange = { phone = it },
-                        label = { Text("WhatsApp Phone Number") },
-                        leadingIcon = { Icon(Icons.Default.Phone, null) },
-                        placeholder = { Text("+91 98765 43210") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Email Address") },
-                        leadingIcon = { Icon(Icons.Default.Email, null) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text("Security PIN / Password") },
-                        leadingIcon = { Icon(Icons.Default.Lock, null) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { agreed = !agreed }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Large Making Brands logo
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(72.dp)
+                            .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                            .border(1.5.dp, Color.White.copy(alpha = 0.25f), CircleShape),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Checkbox(
-                            checked = agreed,
-                            onCheckedChange = { agreed = it }
-                        )
-                        Text(
-                            text = "I agree to local AES GCM encryption guidelines.",
-                            fontSize = 11.sp,
-                            color = BeigeSecondary
+                        Icon(
+                            imageVector = Icons.Default.AllInclusive,
+                            contentDescription = "Logo Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(40.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
+                    Text(
+                        text = "Making Brands",
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        letterSpacing = 1.sp
+                    )
+                    Text(
+                        text = "Connecting Brands to the World",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White.copy(alpha = 0.75f),
+                        letterSpacing = 0.5.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                // Subtitle: "This app is made to make your work easy with Ai features"
+                Text(
+                    text = "This app is made to make your work\neasy with Ai features",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 22.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(56.dp))
+
+                // Buttons Container
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .padding(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Log In Button (Figma Style)
                     Button(
-                        onClick = {
-                            if (fullName.isNotEmpty() && phone.isNotEmpty()) {
-                                viewModel.triggerSignUp(fullName, phone, email)
-                            }
-                        },
-                        enabled = agreed && fullName.isNotBlank() && phone.isNotBlank(),
-                        colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
-                        shape = RoundedCornerShape(12.dp),
+                        onClick = { viewModel.currentScreen.value = AppScreen.SIGN_IN },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF803003)), // Deep Chocolate Brown
+                        shape = RoundedCornerShape(24.dp), // Capsule style
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .height(50.dp)
+                            .testTag("gateway_login_button")
                     ) {
-                        Text("Register & Verify OTP", fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(
+                            text = "Log In",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+
+                    // Sign Up Button (Figma Style)
+                    Button(
+                        onClick = { showGateway = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE2F3E8)), // Soft Mint Green
+                        shape = RoundedCornerShape(24.dp), // Capsule style
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .testTag("gateway_signup_button")
+                    ) {
+                        Text(
+                            text = "Sign Up",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF0F4C3A) // Deep Forest Teal
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Forgot Password Link
+                    TextButton(
+                        onClick = { viewModel.currentScreen.value = AppScreen.FORGOT_PASSWORD }
+                    ) {
+                        Text(
+                            text = "Forgot Password?",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            TextButton(
-                onClick = { 
-                    viewModel.currentScreen.value = AppScreen.SIGN_IN
-                },
-                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
+        }
+    } else {
+        // --- SIGN UP FORM SCREEN (with back option to gateway) ---
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(if (highContrastMode) Color.Black else Color(0xFFF9EAE1)) // Figma apricot-cream background
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(androidx.compose.foundation.rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Already registered? Sign In with WhatsApp OTP", fontWeight = FontWeight.Bold)
+                // Back Button to Gateway
+                IconButton(
+                    onClick = { showGateway = true },
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .background(Color.White.copy(alpha = 0.6f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color(0xFF803003)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Icon(
+                    imageVector = Icons.Default.AllInclusive,
+                    contentDescription = null,
+                    tint = Color(0xFF803003),
+                    modifier = Modifier.size(48.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Create Secure Account",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFF803003)
+                )
+                Text(
+                    text = "Configure your offline voice assistant dialer",
+                    fontSize = 12.sp,
+                    color = Color(0xFF6B7280),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    border = BorderStroke(1.dp, Color(0xFFD4A373).copy(alpha = 0.4f)),
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = fullName,
+                            onValueChange = { fullName = it },
+                            label = { Text("Full Name") },
+                            leadingIcon = { Icon(Icons.Default.Person, null, tint = Color(0xFF803003)) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF803003),
+                                focusedLabelColor = Color(0xFF803003)
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+
+                        OutlinedTextField(
+                            value = phone,
+                            onValueChange = { phone = it },
+                            label = { Text("WhatsApp Phone Number") },
+                            leadingIcon = { Icon(Icons.Default.Phone, null, tint = Color(0xFF803003)) },
+                            placeholder = { Text("+91 98765 43210") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF803003),
+                                focusedLabelColor = Color(0xFF803003)
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+
+                        OutlinedTextField(
+                            value = email,
+                            onValueChange = { email = it },
+                            label = { Text("Email Address") },
+                            leadingIcon = { Icon(Icons.Default.Email, null, tint = Color(0xFF803003)) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF803003),
+                                focusedLabelColor = Color(0xFF803003)
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            label = { Text("Security PIN / Password") },
+                            leadingIcon = { Icon(Icons.Default.Lock, null, tint = Color(0xFF803003)) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF803003),
+                                focusedLabelColor = Color(0xFF803003)
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { agreed = !agreed }
+                        ) {
+                            Checkbox(
+                                checked = agreed,
+                                onCheckedChange = { agreed = it },
+                                colors = CheckboxDefaults.colors(checkedColor = Color(0xFF803003))
+                            )
+                            Text(
+                                text = "I agree to local AES GCM encryption guidelines.",
+                                fontSize = 11.sp,
+                                color = Color(0xFF6B7280)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Button(
+                            onClick = {
+                                if (fullName.isNotEmpty() && phone.isNotEmpty()) {
+                                    viewModel.triggerSignUp(fullName, phone, email)
+                                }
+                            },
+                            enabled = agreed && fullName.isNotBlank() && phone.isNotBlank(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF803003)),
+                            shape = RoundedCornerShape(24.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                        ) {
+                            Text("Register & Verify OTP", fontWeight = FontWeight.Bold, color = Color.White)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TextButton(
+                    onClick = {
+                        viewModel.currentScreen.value = AppScreen.SIGN_IN
+                    }
+                ) {
+                    Text(
+                        text = "Already registered? Sign In here",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF803003)
+                    )
+                }
             }
         }
     }
@@ -3164,7 +3469,7 @@ fun SignInScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
+            .background(if (highContrastMode) Color.Black else Color(0xFFF9EAE1)) // Figma apricot-cream background
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(24.dp),
@@ -3174,24 +3479,16 @@ fun SignInScreen(viewModel: AppViewModel) {
         Button(
             onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
-                contentColor = if (highContrastMode) Color.White else BeigePrimary
+                containerColor = Color.White.copy(alpha = 0.15f),
+                contentColor = Color.White
             ),
-            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .testTag("skip_to_dashboard_signin")
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Skip",
-                    modifier = Modifier.size(12.dp)
-                )
-            }
+            Text("Skip to App", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (highContrastMode) Color.White else Color(0xFF803003))
         }
 
         Column(
@@ -3200,6 +3497,22 @@ fun SignInScreen(viewModel: AppViewModel) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Back Button to Gateway
+            IconButton(
+                onClick = { viewModel.currentScreen.value = AppScreen.SIGN_UP },
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .background(Color.White.copy(alpha = 0.6f), CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color(0xFF803003)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Box(
                 modifier = Modifier
                     .size(80.dp)
@@ -3218,22 +3531,22 @@ fun SignInScreen(viewModel: AppViewModel) {
                 text = "Sign In with WhatsApp",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
-                color = if (highContrastMode) Color.White else BeigePrimary
+                color = Color(0xFF803003)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "We'll send a 4-digit security code to your WhatsApp",
                 fontSize = 12.sp,
-                color = if (highContrastMode) Color.White else BeigeSecondary,
+                color = Color(0xFF6B7280),
                 textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(28.dp))
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = if (highContrastMode) Color.Black else Color(0xFFFCFAF5)),
-                border = BorderStroke(1.dp, if (highContrastMode) Color.White else Color(0xFFD4B483).copy(alpha = 0.5f)),
-                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, Color(0xFFD4A373).copy(alpha = 0.4f)),
+                shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -3241,21 +3554,25 @@ fun SignInScreen(viewModel: AppViewModel) {
                         text = "Enter Your WhatsApp Number",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = BeigePrimary
+                        color = Color(0xFF803003)
                     )
 
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
                         label = { Text("Mobile Number") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF803003),
+                            focusedLabelColor = Color(0xFF803003)
+                        ),
                         leadingIcon = { 
                             Row(
                                 modifier = Modifier.padding(start = 12.dp, end = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("+91", fontWeight = FontWeight.Bold, color = BeigePrimary)
+                                Text("+91", fontWeight = FontWeight.Bold, color = Color(0xFF803003))
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.Gray))
+                                Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.Gray.copy(alpha = 0.5f)))
                             }
                         },
                         placeholder = { Text("9876543210") },
@@ -3277,11 +3594,11 @@ fun SignInScreen(viewModel: AppViewModel) {
                             }
                         },
                         enabled = phone.isNotBlank(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366)),
-                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF803003)),
+                        shape = RoundedCornerShape(24.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .height(50.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Send, null, tint = Color.White, modifier = Modifier.size(16.dp))
@@ -3299,14 +3616,13 @@ fun SignInScreen(viewModel: AppViewModel) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("New here?", fontSize = 13.sp, color = BeigeSecondary)
+                Text("New here?", fontSize = 13.sp, color = Color(0xFF6B7280))
                 TextButton(
                     onClick = { 
                         viewModel.currentScreen.value = AppScreen.SIGN_UP 
-                    },
-                    colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
+                    }
                 ) {
-                    Text("Create An Account", fontWeight = FontWeight.Bold)
+                    Text("Create An Account", fontWeight = FontWeight.Bold, color = Color(0xFF803003))
                 }
             }
         }
@@ -3327,7 +3643,7 @@ fun OtpScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
+            .background(if (highContrastMode) Color.Black else Color(0xFFF9EAE1)) // Figma apricot-cream background
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(24.dp),
@@ -3337,24 +3653,16 @@ fun OtpScreen(viewModel: AppViewModel) {
         Button(
             onClick = { viewModel.currentScreen.value = AppScreen.DASHBOARD },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFD4B483).copy(alpha = 0.2f),
-                contentColor = if (highContrastMode) Color.White else BeigePrimary
+                containerColor = Color.White.copy(alpha = 0.15f),
+                contentColor = Color.White
             ),
-            border = BorderStroke(1.dp, Color(0xFFD4B483)),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .testTag("skip_to_dashboard_otp")
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Skip to Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Skip",
-                    modifier = Modifier.size(12.dp)
-                )
-            }
+            Text("Skip to App", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (highContrastMode) Color.White else Color(0xFF803003))
         }
 
         Column(
@@ -3371,7 +3679,7 @@ fun OtpScreen(viewModel: AppViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE2F3E8)), // Light mint green from Figma
                     border = BorderStroke(1.dp, Color(0xFF25D366)),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -3389,7 +3697,7 @@ fun OtpScreen(viewModel: AppViewModel) {
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("WhatsApp Verification Agent", fontWeight = FontWeight.Bold, color = Color(0xFF1B5E20), fontSize = 13.sp)
+                            Text("WhatsApp Verification Agent", fontWeight = FontWeight.Bold, color = Color(0xFF0F4C3A), fontSize = 13.sp)
                             Text(
                                 "Your MB Connect OTP verification code is: $simulatedCode. Do not share.",
                                 fontSize = 12.sp,
@@ -3402,23 +3710,23 @@ fun OtpScreen(viewModel: AppViewModel) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Icon(Icons.Default.Security, null, tint = BeigePrimary, modifier = Modifier.size(56.dp))
+            Icon(Icons.Default.Security, null, tint = Color(0xFF803003), modifier = Modifier.size(56.dp))
             Spacer(modifier = Modifier.height(16.dp))
-            Text("OTP Verification", fontSize = 24.sp, fontWeight = FontWeight.Black, color = if (highContrastMode) Color.White else BeigePrimary)
+            Text("OTP Verification", fontSize = 24.sp, fontWeight = FontWeight.Black, color = Color(0xFF803003))
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 "We sent a simulated WhatsApp OTP to $phoneNum",
                 fontSize = 13.sp,
-                color = if (highContrastMode) Color.White else BeigeSecondary,
+                color = Color(0xFF6B7280),
                 textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = if (highContrastMode) Color.Black else Color(0xFFFCFAF5)),
-                border = BorderStroke(1.dp, if (highContrastMode) Color.White else Color(0xFFD4B483).copy(alpha = 0.5f)),
-                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, Color(0xFFD4A373).copy(alpha = 0.4f)),
+                shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -3427,6 +3735,10 @@ fun OtpScreen(viewModel: AppViewModel) {
                         onValueChange = { if (it.length <= 4) otpInput = it },
                         label = { Text("4-Digit WhatsApp OTP") },
                         placeholder = { Text("XXXX") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF803003),
+                            focusedLabelColor = Color(0xFF803003)
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 20.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp),
                         singleLine = true,
@@ -3451,11 +3763,11 @@ fun OtpScreen(viewModel: AppViewModel) {
                                 Toast.makeText(context, "Welcome, verified securely!", Toast.LENGTH_SHORT).show()
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
-                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF803003)),
+                        shape = RoundedCornerShape(24.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .height(50.dp)
                     ) {
                         Text("Verify & Setup Completed", fontWeight = FontWeight.Bold, color = Color.White)
                     }
@@ -3473,12 +3785,12 @@ fun OtpScreen(viewModel: AppViewModel) {
                                 Toast.makeText(context, "New simulated WhatsApp code sent!", Toast.LENGTH_SHORT).show()
                             }
                         ) {
-                            Text("Resend OTP Code", fontWeight = FontWeight.Bold, color = BeigePrimary)
+                            Text("Resend OTP Code", fontWeight = FontWeight.Bold, color = Color(0xFF803003))
                         }
                         TextButton(
                             onClick = { viewModel.currentScreen.value = AppScreen.FORGOT_PASSWORD }
                         ) {
-                            Text("Forgot Security PIN?", color = BeigeSecondary)
+                            Text("Forgot Security PIN?", color = Color(0xFF6B7280))
                         }
                     }
                 }
@@ -3488,7 +3800,7 @@ fun OtpScreen(viewModel: AppViewModel) {
 
             TextButton(
                 onClick = { viewModel.currentScreen.value = AppScreen.SIGN_IN },
-                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
+                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF803003))
             ) {
                 Text("← Change Phone Number")
             }
@@ -3506,7 +3818,7 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (highContrastMode) Color.Black else MaterialTheme.colorScheme.background)
+            .background(if (highContrastMode) Color.Black else Color(0xFFF9EAE1)) // Figma apricot-cream background
             .statusBarsPadding()
             .padding(24.dp),
         contentAlignment = Alignment.Center
@@ -3515,24 +3827,28 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(Icons.Default.Help, null, tint = BeigePrimary, modifier = Modifier.size(56.dp))
+            Icon(Icons.Default.Help, null, tint = Color(0xFF803003), modifier = Modifier.size(56.dp))
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Recovery Portal", fontSize = 24.sp, fontWeight = FontWeight.Black, color = if (highContrastMode) Color.White else BeigePrimary)
-            Text("Recover your dialer security keys & credentials", fontSize = 12.sp, color = BeigeSecondary)
+            Text("Recovery Portal", fontSize = 24.sp, fontWeight = FontWeight.Black, color = Color(0xFF803003))
+            Text("Recover your dialer security keys & credentials", fontSize = 12.sp, color = Color(0xFF6B7280))
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = if (highContrastMode) Color.Black else Color(0xFFFCFAF5)),
-                border = BorderStroke(1.dp, if (highContrastMode) Color.White else Color(0xFFD4B483).copy(alpha = 0.5f)),
-                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, Color(0xFFD4A373).copy(alpha = 0.4f)),
+                shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     OutlinedTextField(
                         value = emailInput,
                         onValueChange = { emailInput = it },
                         label = { Text("Enter account email") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF803003),
+                            focusedLabelColor = Color(0xFF803003)
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -3540,26 +3856,27 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
                     Button(
                         onClick = { successAlert = true },
                         enabled = emailInput.isNotBlank(),
-                        colors = ButtonDefaults.buttonColors(containerColor = BeigePrimary),
-                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF803003)),
+                        shape = RoundedCornerShape(24.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .height(50.dp)
                     ) {
                         Text("Retrieve Keys", fontWeight = FontWeight.Bold, color = Color.White)
                     }
 
                     if (successAlert) {
                         Surface(
-                            color = Color(0xFFE8F0FE),
-                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFFE2F3E8), // Light mint green from Figma
+                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 text = "Simulated Reset: A security recovery token has been simulated to $emailInput to restore your AES keys locally.",
-                                color = Color(0xFF1A73E8),
+                                color = Color(0xFF0F4C3A),
                                 fontSize = 11.sp,
                                 modifier = Modifier.padding(12.dp)
+                                    .testTag("reset_success_message")
                             )
                         }
                     }
@@ -3570,9 +3887,9 @@ fun ForgotPasswordScreen(viewModel: AppViewModel) {
 
             TextButton(
                 onClick = { viewModel.currentScreen.value = AppScreen.SIGN_IN },
-                colors = ButtonDefaults.textButtonColors(contentColor = BeigePrimary)
+                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF803003))
             ) {
-                Text("← Return to Sign-in Screen")
+                Text("← Return to Sign-in Screen", fontWeight = FontWeight.Bold)
             }
         }
     }
